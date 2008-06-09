@@ -1,0 +1,16 @@
+<h2><?= $this->message ?></h2>
+<? if ((500 == $this->code) && (Bugapp_Plugin_Initialize::getConfig()->showExceptions)): ?>
+<h4>Error details:</h4>
+<dl>
+    <dt>Exception Code:</dt>
+    <dd><?= $this->info->getCode() ?></dd>
+
+    <dt>Exception Message:</dt>
+    <dd><?= $this->info->getMessage() ?></dd>
+
+    <dt>Stack Trace:</dt>
+    <dd><pre>
+    <?= $this->info->getTraceAsString() ?>
+    </pre></dd>
+</dl>
+<? endif ?>
