@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__FILE__) . '/AModel.php';
+
 /**
  * Bug application model
  * 
@@ -8,65 +10,28 @@
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */
-class Model_Bug
+class Model_Bug extends Model_AModel
 {
     /**
-     * @var Zend_Loader_PluginLoader
+     * Primary table for operations
+     * @var string
      */
-    protected $_loader;
+    protected $_primaryTable = 'bug';
+
+    /**
+     * Columns that may not be specified in save operations
+     * @var array
+     */
+    protected $_protectedColumns = array(
+        'date_created',
+        'date_resolved',
+        'date_deleted',
+    );
 
     /**
      * @var array Sort orders
      */
     protected $_sortOrder = array();
-
-    /**
-     * @var array Table instances
-     */
-    protected $_tables    = array();
-
-    /**
-     * Get plugin loader
-     * 
-     * @return Zend_Loader_PluginLoader
-     */
-    public function getPluginLoader()
-    {
-        if (null === $this->_loader) {
-            $this->_loader = new Zend_Loader_PluginLoader();
-            $this->_loader->addPrefixPath('Model_Table', dirname(__FILE__) . '/Table/');
-        }
-        return $this->_loader;
-    }
-
-    /**
-     * Get table class
-     * 
-     * @param  string $name 
-     * @return Zend_Db_Table_Abstract
-     */
-    public function getTable($name)
-    {
-        $name  = ucfirst($name);
-        if (!array_key_exists($name, $this->_tables)) {
-            $class = $this->getPluginLoader()->load($name);
-            $this->_tables[$name] = new $class;
-        }
-        return $this->_tables[$name];
-    }
-
-    /**
-     * Fetch a bug by ID
-     * 
-     * @param  int $id 
-     * @return Zend_Db_Table_Row|null
-     */
-    public function fetchBug($id)
-    {
-        $select = $this->_getSelect();
-        $select->where('id = ?', $id);
-        return $this->getTable('bug')->fetchRow($select);
-    }
 
     /**
      * Set sort order for returning results
@@ -92,46 +57,6 @@ class Model_Bug
     {
         $this->_sortOrder[] = array($field . ' ' . $direction);
         return $this;
-    }
-
-    /**
-     * @todo Add bug
-     * @todo Update bug
-     * @todo Link bugs
-     * @todo Delete bug
-     */
-
-    /**
-     * Insert or update a bug
-     * 
-     * @param array $bugInfo 
-     * @return void
-     */
-    public function save(array $bugInfo)
-    {
-        $table = $this->getTable('bug');
-        $bugId = null;
-        $row   = null;
-        if (array_key_exists('bug_id', $bugInfo)) {
-            $bugId = $bugInfo['bug_id'];
-            unset($bugInfo['bug_id']);
-            $matches = $table->find($bugId);
-            if (0 < count($matches)) {
-                $row = $matches->current();
-            }
-        }
-        if (null === $row) {
-            $row = $table->createRow();
-        }
-
-        $columns = $table->info('cols');
-        foreach ($columns as $column) {
-            if (array_key_exists($column, $bugInfo)) {
-                $row->$column = $bugInfo[$column];
-            }
-        }
-
-        $bugId = $row->save();
     }
 
     /**
@@ -181,6 +106,47 @@ class Model_Bug
     }
 
     /**
+     * Resolve a bug
+     * 
+     * @param  int $bugId 
+     * @param  int $resolutionId 
+     * @param  int $developerId 
+     * @return int
+     */
+    public function resolve($bugId, $resolutionId, $developerId)
+    {
+        $resolutions = $this->getResolutions();
+        if (!in_array($resolutionId, array_keys($resolutions))) {
+            throw new Exception('Invalid resolution type provided');
+        }
+
+        $table = $this->getTable('bug');
+        $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
+        $data  = array(
+            'date_resolved' => date('Y-m-d'),
+            'developer_id'  => $developerId,
+            'resolution_id' => $resolutionId,
+        );
+        return $table->update($data, $where);
+    }
+
+    /**
+     * Close a bug
+     * 
+     * @param  int $bugId 
+     * @return int
+     */
+    public function close($bugId)
+    {
+        $table = $this->getTable('bug');
+        $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
+        $data  = array(
+            'date_closed' => date('Y-m-d'),
+        );
+        return $table->update($data, $where);
+    }
+
+    /**
      * Delete a bug
      * 
      * @param  int $bugId 
@@ -190,7 +156,7 @@ class Model_Bug
     {
         $table = $this->getTable('bug');
         $where = $table->getAdapter()->quoteInto('id = ?', $bugId);
-        return $table->update(array('date_closed' => date('Y-m-d')), $where);
+        return $table->update(array('date_deleted' => date('Y-m-d')), $where);
     }
 
     /**
@@ -238,9 +204,9 @@ class Model_Bug
     public function fetchBug($id)
     {
         $select = $this->_getSelect();
-        $select->where('id = ?', $id)
+        $select->where('b.id = ?', $id)
                ->where('date_deleted IS NULL');
-        return $this->getTable('bug')->fetchOne($select);
+        return $this->getTable('bug')->fetchRow($select);
     }
 
     /**
@@ -254,7 +220,6 @@ class Model_Bug
     {
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL');
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -271,7 +236,6 @@ class Model_Bug
     {
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL');
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -289,7 +253,6 @@ class Model_Bug
         $select = $this->_getSelect();
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL');
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -308,7 +271,6 @@ class Model_Bug
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL')
                ->where('reporter_id = ?', $reporterId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -328,7 +290,6 @@ class Model_Bug
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL')
                ->where('reporter_id = ?', $reporterId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -347,7 +308,6 @@ class Model_Bug
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL')
                ->where('reporter_id = ?', $reporterId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -366,7 +326,6 @@ class Model_Bug
         $select = $this->_getSelect();
         $select->where('date_closed IS NULL')
                ->where('developer_id = ?', $developerId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -386,7 +345,6 @@ class Model_Bug
         $select->where('resolution_id > 2')
                ->where('date_closed IS NULL')
                ->where('developer_id = ?', $developerId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);
@@ -405,7 +363,6 @@ class Model_Bug
         $select = $this->_getSelect();
         $select->where('date_closed IS NOT NULL')
                ->where('developer_id = ?', $developerId);
-        $select = $this->_setLimit($select, $limit, $offset);
         $this->_setLimit($select, $limit, $offset)
              ->_setSort($select);
         return $this->getTable('bug')->fetchAll($select);

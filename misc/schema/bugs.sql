@@ -3,7 +3,9 @@ CREATE TABLE "user" (
     username VARCHAR(64) NOT NULL,
     email VARCHAR(255) NOT NULL,
     fullname VARCHAR(128) NOT NULL,
-    password CHAR(32) NOT NULL
+    password CHAR(32) NOT NULL,
+    date_created DATE NOT NULL,
+    date_banned DATE NULL
 );
 CREATE INDEX "user_username" ON "user" ("username");
 CREATE INDEX "user_email" ON "user" ("email");
@@ -32,7 +34,8 @@ CREATE TABLE "comment" (
     user_id INTEGER NOT NULL,
     bug_id INTEGER NOT NULL,
     "comment" TEXT,
-    comment_date DATE
+    date_created DATE NOT NULL,
+    date_deleted DATE
 );
 CREATE INDEX "comment_bug_id" ON "comment" ("bug_id");
 CREATE INDEX "comment_user_id" ON "comment" ("user_id");
