@@ -38,8 +38,6 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         }
         $this->_root = $root;
 
-        $this->_getConfig();
-
         $this->initPhpConfig();
 
         $this->_front = Zend_Controller_Front::getInstance();
@@ -52,6 +50,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function routeStartup()
     {
+        $this->initDb();
         $this->initControllers();
         $this->initRoutes();
     }
@@ -75,6 +74,18 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         foreach ($config->phpSettings as $key => $value) {
             ini_set($key, $value);
         }
+    }
+
+    public function initDb()
+    {
+        $config = $this->_getConfig();
+        if (!isset($config->db)) {
+            return;
+        }
+
+        $db = Zend_Db::factory($config->db);
+        Zend_Db_Table_Abstract::setDefaultAdapter($db);
+        Zend_Registry::set('db', $db);
     }
 
     /**

@@ -92,6 +92,10 @@ class Model_User extends Model_AModel
                 throw new Exception('Invalid user; duplicates existing user in database');
             }
         }
+
+        if (array_key_exists('password', $info)) {
+            $info['password'] = md5($info['password']);
+        }
         return parent::save($info, $tableName);
     }
 
