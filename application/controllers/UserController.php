@@ -17,8 +17,8 @@ class UserController extends Zend_Controller_Action
             }
         }
 
-        $this->view->loginForm        = $this->getForm('login');
-        $this->view->registrationForm = $this->getForm('register');
+        $this->view->loginForm        = $this->_helper->getForm('login', array('action' => '/user/login', 'method' => 'post'));
+        $this->view->registrationForm = $this->_helper->getForm('register', array('action' => '/user/register', 'method' => 'post'));
     }
 
     public function indexAction()
@@ -51,8 +51,13 @@ class UserController extends Zend_Controller_Action
             return $this->render('index'); // re-render the login form
         }
 
-        // We're authenticated! Redirect to the home page
-        $this->_helper->redirector('index', 'index');
+        // Persist some identity details
+        $auth->getStorage()->write($adapter->getResultRowObject(array(
+            'id', 'username', 'fullname', 'email', 'date_created'
+        )));
+
+        // We're authenticated! Redirect to the user page
+        $this->_helper->redirector('view');
     }
 
     public function logoutAction()
@@ -63,9 +68,7 @@ class UserController extends Zend_Controller_Action
 
     public function viewAction()
     {
-        $identity = Zend_Auth::getInstance()->getIdentity();
-        $user = $this->getModel()->fetchUser($identity);
-        $this->view->identity = $identity;
+        $user = Zend_Auth::getInstance()->getIdentity();
         $this->view->user = $user;
     }
 
@@ -86,25 +89,24 @@ class UserController extends Zend_Controller_Action
         }
 
         // Valid form
-        $id = $this->getModel()->save($form->getValues());
+        $id = $this->_helper->getModel('user')->save($form->getValues());
         if (!is_numeric($id)) {
             // Failure to insert
             throw new Exception('Unexpected error inserting new user');
         }
 
-        $this->_helper->redirector('view');
-    }
+        // Authenticate and persist user identity
+        $userRow = $this->_helper->getModel('user')->fetchUser($id);
+        $user = array(
+            'id'           => $userRow->id,
+            'username'     => $userRow->username,
+            'fullname'     => $userRow->fullname,
+            'email'        => $userRow->email,
+            'date_created' => $userRow->date_created,
+        );
+        Zend_Auth::getInstance()->getStorage()->write((object) $user);
 
-    public function getForm($type = 'login')
-    {
-        $class = 'Bugapp_Form_' . ucfirst($type);
-        if (!array_key_exists($class, $this->_forms)) {
-            $this->_forms[$class] = new $class(array(
-                'action' => '/user/' . strtolower($type),
-                'method' => 'post',
-            ));
-        }
-        return $this->_forms[$class];
+        $this->_helper->redirector('view');
     }
 
     public function getAuthAdapter($values)
@@ -114,20 +116,12 @@ class UserController extends Zend_Controller_Action
                 Zend_Db_Table_Abstract::getDefaultAdapter(),
                 'user',
                 'username',
-                'password'
+                'password',
+                '? AND (date_banned IS NULL)'
             );
         }
         $this->_authAdapter->setIdentity($values['username']);
         $this->_authAdapter->setCredential(md5($values['password']));
         return $this->_authAdapter;
-    }
-
-    public function getModel()
-    {
-        if (null === $this->_model) {
-            require_once dirname(__FILE__) . '/../models/User.php';
-            $this->_model = new Model_User;
-        }
-        return $this->_model;
     }
 }

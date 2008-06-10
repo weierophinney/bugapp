@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__FILE__) . '/BugRelation.php';
+
 class Model_Table_RelationType extends Zend_Db_Table
 {
     protected $_name    = 'relation_type';

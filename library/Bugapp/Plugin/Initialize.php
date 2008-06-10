@@ -51,8 +51,11 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public function routeStartup()
     {
         $this->initDb();
+        $this->initHelpers();
         $this->initControllers();
         $this->initRoutes();
+
+        $this->_front->throwExceptions(true);
     }
 
     /**
@@ -76,6 +79,11 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         }
     }
 
+    /**
+     * Initialize DB
+     * 
+     * @return void
+     */
     public function initDb()
     {
         $config = $this->_getConfig();
@@ -86,6 +94,16 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $db = Zend_Db::factory($config->db);
         Zend_Db_Table_Abstract::setDefaultAdapter($db);
         Zend_Registry::set('db', $db);
+    }
+
+    /**
+     * Initialize action helpers
+     * 
+     * @return void
+     */
+    public function initHelpers()
+    {
+        Zend_Controller_Action_HelperBroker::addPrefix('Bugapp_Helper');
     }
 
     /**

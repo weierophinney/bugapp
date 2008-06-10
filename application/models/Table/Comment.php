@@ -1,4 +1,7 @@
 <?php
+require_once dirname(__FILE__) . '/User.php';
+require_once dirname(__FILE__) . '/Bug.php';
+
 class Model_Table_Comment extends Zend_Db_Table
 {
     protected $_name    = 'comment';

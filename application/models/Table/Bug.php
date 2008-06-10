@@ -1,4 +1,10 @@
 <?php
+require_once dirname(__FILE__) . '/BugRelation.php';
+require_once dirname(__FILE__) . '/Comment.php';
+require_once dirname(__FILE__) . '/IssueType.php';
+require_once dirname(__FILE__) . '/ResolutionType.php';
+require_once dirname(__FILE__) . '/PriorityType.php';
+
 class Model_Table_Bug extends Zend_Db_Table
 {
     protected $_name    = 'bug';
