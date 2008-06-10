@@ -118,13 +118,13 @@ class BugController extends Zend_Controller_Action
             return $this->viewAction();
         }
 
-        $model = $this->_helper->getModel('bug');
+        $model = $this->_helper->getModel('comment');
         $id = $model->save($form->getValues());
         if (null === $id) {
-            throw new Exception('Unexpected error saving bug');
+            throw new Exception('Unexpected error saving comment');
         }
 
-        $this->_helper->redirector('view', 'bug', 'default', array('id' => $id));
+        $this->_helper->redirector('view', 'bug', 'default', array('id' => $bugId));
     }
 
     public function getBugForm()
