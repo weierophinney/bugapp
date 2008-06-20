@@ -1,0 +1,10 @@
+BUG APPLICATION
+
+This sample bug application was developed for a workshop at the Dutch PHP
+Conference (2008). It is incomplete and completely unstyled, and comes with
+absolutely no guarantees whatsoever. Its sole purpose was to provide a basis for
+the examples and direction of the workshop. Use and modify at your own risk.
+
+You may need to edit public/.htaccess slightly to specify your native timezone;
+otherwise, simply setup a vhost pointing the document root at public/ and start
+playing.
