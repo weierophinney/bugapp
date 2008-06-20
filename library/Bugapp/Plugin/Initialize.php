@@ -52,10 +52,12 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->initDb();
         $this->initHelpers();
-        $this->initControllers();
+        $this->initView();
+        $this->initPlugins();
         $this->initRoutes();
+        $this->initControllers();
 
-        $this->_front->throwExceptions(true);
+        $this->_front->throwExceptions(false);
     }
 
     /**
@@ -68,6 +70,11 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         return self::$_config;
     }
 
+    /**
+     * Initialize PHP settings
+     * 
+     * @return void
+     */
     public function initPhpConfig()
     {
         $config = $this->_getConfig();
@@ -107,13 +114,34 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     }
 
     /**
-     * Initialize controller directories
+     * Initialize view and layout
      * 
      * @return void
      */
-    public function initControllers()
+    public function initView()
     {
-        $this->_front->addControllerDirectory($this->_root . '/application/controllers/');
+        // Setup View
+        $view = new Zend_View();
+        $view->doctype('XHTML1_TRANSITIONAL');
+        $view->placeholder('nav')->setPrefix('<div id="nav">')
+                                 ->setPostfix('</div>');
+
+        // Set view in ViewRenderer
+        $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+        $viewRenderer->setView($view);
+
+        // Initialize layouts
+        Zend_Layout::startMvc($this->_root . '/application/views/layouts');
+    }
+
+    /**
+     * Initialize plugins
+     * 
+     * @return void
+     */
+    public function initPlugins()
+    {
+        $this->_front->registerPlugin(new Bugapp_Plugin_Auth());
     }
 
     /**
@@ -123,6 +151,16 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initRoutes()
     {
+    }
+
+    /**
+     * Initialize controller directories
+     * 
+     * @return void
+     */
+    public function initControllers()
+    {
+        $this->_front->addControllerDirectory($this->_root . '/application/controllers/');
     }
 
     /**

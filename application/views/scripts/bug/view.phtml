@@ -13,5 +13,7 @@
 <h3>Comments</h3>
 <?= $this->comments($this->bug) ?>
 
+<?  if ($this->checkAcl('bug', 'comment'): ?>
 <h3>Submit a comment:</h3>
 <?= $this->commentForm ?>
+<? endif ?>

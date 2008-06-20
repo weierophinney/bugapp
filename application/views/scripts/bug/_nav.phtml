@@ -1,0 +1,28 @@
+<ul>
+<li><a href="/bug/list">Open bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="/bug/list/status/open/developer/<?= $this->user_name ?>">Your open bugs</a></li>
+        <li><a href="/bug/list/status/open/reporter/<?= $this->user_name ?>">Open bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+
+<li><a href="/bug/list/status/resolved">Resolved bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="/bug/list/status/resolved/developer/<?= $this->user_name ?>">Your resolved bugs</a></li>
+        <li><a href="/bug/list/status/resolved/reporter/<?= $this->user_name ?>">Resolved bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+
+<li><a href="/bug/list/status/closed">Closed bugs</a>
+    <? if (null !== $this->user_name): ?>
+    <ul>
+        <li><a href="/bug/list/status/closed/developer/<?= $this->user_name ?>">Your closed bugs</a></li>
+        <li><a href="/bug/list/status/closed/reporter/<?= $this->user_name ?>">Closed bugs you reported</a></li>
+    </ul>
+    <? endif ?>
+</li>
+</ul>

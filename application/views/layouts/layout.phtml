@@ -1,0 +1,16 @@
+<?= $this->doctype() ?>
+<html>
+<head>
+    <?= $this->headTitle() ?> 
+    <?= $this->headLink() ?> 
+    <?= $this->headStyle() ?> 
+    <?= $this->headScript() ?>
+</head>
+<body>
+    <?= $this->render('_topnav.phtml') ?>
+    <div id="content">
+    <?= $this->layout()->content ?>
+    </div>
+    <?= $this->placeholder('nav') ?>
+</body>
+</html>

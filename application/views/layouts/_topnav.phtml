@@ -1,0 +1,13 @@
+<div id="topnav">
+    <ul>
+        <li><a href="/bug">Issues</a></li>
+        <? if ('guest' === $this->getRole()): ?>
+        <li><a href="/user">Login/Register</a></li>
+        <? else: ?>
+            <? if ($this->checkAcl('bug', 'add')): ?>
+        <li><a href="/bug/add">Report an Issue</a></li>
+            <? endif ?>
+        <li>Logged in as <a href="/user/view"><?= $this->user_name ?></a></li>
+        <? endif ?>
+    </ul>
+</div>

@@ -1,20 +1,34 @@
 <?php
 class BugController extends Zend_Controller_Action
 {
+    public $userId = null;
+
     public function preDispatch()
     {
         $authenticated = Zend_Auth::getInstance()->hasIdentity();
         $action        = $this->getRequest()->getActionName();
-        if (!$authenticated && in_array($action, array('comment', 'add', 'add-process'))) {
-            return $this->_forward('list');
-        } elseif ($authenticated) {
-            $this->userId = Zend_Auth::getInstance()->getIdentity()->id;
+        $acl           = Zend_Registry::get('acl');
+        $role          = Zend_Registry::get('role');
+
+        if ($acl->has('bug')) {
+            if (!$acl->isAllowed($role, 'bug', $action)) {
+                return $this->_forward('list');
+            }
         }
+
+        $auth = Zend_Auth::getInstance();
+        if ($auth->hasIdentity()) {
+            $this->userId = $auth->getIdentity()->id;
+        }
+
+        $this->view->placeholder('nav')->append(
+            $this->view->render('bug/_nav.phtml')
+        );
     }
 
     public function indexAction()
     {
-        return $this->listAction();
+        return $this->_forward('list');
     }
 
     public function listAction()

@@ -4,6 +4,7 @@ CREATE TABLE "user" (
     email VARCHAR(255) NOT NULL,
     fullname VARCHAR(128) NOT NULL,
     password CHAR(32) NOT NULL,
+    role VARCHAR(32) NOT NULL DEFAULT 'user',
     date_created DATE NOT NULL,
     date_banned DATE NULL
 );
