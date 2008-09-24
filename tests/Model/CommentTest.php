@@ -11,6 +11,8 @@ require_once 'Comment.php';
 
 /**
  * Test class for Model_Comment.
+ *
+ * @group Models
  */
 class Model_CommentTest extends PHPUnit_Framework_TestCase 
 {

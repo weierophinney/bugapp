@@ -11,6 +11,8 @@ require_once 'Bug.php';
 
 /**
  * Test class for Model_Bug.
+ *
+ * @group Models
  */
 class Model_BugTest extends PHPUnit_Framework_TestCase 
 {

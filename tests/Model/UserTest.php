@@ -11,6 +11,8 @@ require_once 'User.php';
 
 /**
  * Test class for Model_User.
+ *
+ * @group Models
  */
 class Model_UserTest extends PHPUnit_Framework_TestCase 
 {
