@@ -1,5 +1,15 @@
-php_flag magic_quotes_gpc Off
+php_flag  magic_quotes_gpc Off
+php_flag  display_errors Off
+php_flag  display_startup_errors Off
 php_value date.timezone America/New_York
+php_value short_open_tag 1
+php_value error_reporting 8191
 
-RewriteEngine on
-RewriteRule !\.(js|json|ico|gif|jpg|png|css)$ index.php
+# Rewrite Rules
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^.*$ /index.php [NC,L]
+

@@ -4,7 +4,7 @@ class Bugapp_Form_Register extends Zend_Form
     public function init()
     {
         $root = Bugapp_Plugin_Initialize::getConfig()->root;
-        require_once $root . '/application/models/User.php';
+        require_once $root . '/models/User.php';
 
         $this->addElementPrefixPath('Bugapp_Validate', 'Bugapp/Validate/', 'validate');
 

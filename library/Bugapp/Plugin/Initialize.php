@@ -19,26 +19,24 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     /**
      * @var string Path to application root
      */
-    protected $_root;
+    protected $_appPath;
 
     /**
      * Constructor
      *
-     * Initialize environment, root path, and configuration.
+     * Initialize environment, application path, and configuration.
      * 
      * @param  string $env 
-     * @param  string|null $root 
+     * @param  string|null $appPath
      * @return void
      */
-    public function __construct($env, $root = null)
+    public function __construct($env, $appPath = null)
     {
         $this->_setEnv($env);
-        if (null === $root) {
-            $root = realpath(dirname(__FILE__) . '/../../../');
+        if (null === $appPath) {
+            $appPath = realpath(dirname(__FILE__) . '/../../../application');
         }
-        $this->_root = $root;
-
-        $this->initPhpConfig();
+        $this->_appPath = $appPath;
 
         $this->_front = Zend_Controller_Front::getInstance();
     }
@@ -46,9 +44,10 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     /**
      * Route startup
      * 
+     * @param  Zend_Controller_Request_Abstract $request
      * @return void
      */
-    public function routeStartup()
+    public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
         $this->initDb();
         $this->initHelpers();
@@ -56,8 +55,6 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $this->initPlugins();
         $this->initRoutes();
         $this->initControllers();
-
-        $this->_front->throwExceptions(false);
     }
 
     /**
@@ -68,22 +65,6 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     public static function getConfig()
     {
         return self::$_config;
-    }
-
-    /**
-     * Initialize PHP settings
-     * 
-     * @return void
-     */
-    public function initPhpConfig()
-    {
-        $config = $this->_getConfig();
-        if (!isset($config->phpSettings)) {
-            return;
-        }
-        foreach ($config->phpSettings as $key => $value) {
-            ini_set($key, $value);
-        }
     }
 
     /**
@@ -131,7 +112,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $viewRenderer->setView($view);
 
         // Initialize layouts
-        Zend_Layout::startMvc($this->_root . '/application/views/layouts');
+        Zend_Layout::startMvc($this->_appPath . '/views/layouts');
     }
 
     /**
@@ -160,23 +141,23 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initControllers()
     {
-        $this->_front->addControllerDirectory($this->_root . '/application/controllers/');
+        $this->_front->addControllerDirectory($this->_appPath . '/controllers/');
     }
 
     /**
      * Get configuration object
      * 
-     * @return Zend_COnfig
+     * @return Zend_Config
      */
     protected function _getConfig()
     {
         if (null === self::$_config) {
-            $configData = include $this->_root . '/application/config/site.php';
+            $configData = include $this->_appPath . '/config/site.php';
             if (!array_key_exists($this->_env, $configData)) {
                 throw new Exception(sprintf('No configuration available for env %s', $this->_env));
             }
             self::$_config = new Zend_Config($configData[$this->_env], true);
-            self::$_config->root = $this->_root;
+            self::$_config->root = $this->_appPath;
         }
         return self::$_config;
     }
