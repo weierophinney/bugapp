@@ -146,7 +146,17 @@ class BugController extends Zend_Controller_Action
         if (!isset($this->view->bugForm)) {
             $this->view->bugForm  = $this->_helper->getForm(
                 'bug', 
-                array('action' => '/bug/process-add', 'method' => 'post')
+                array(
+                    'method' => 'post',
+                    'action' => $this->view->url(
+                        array(
+                            'controller' => 'bug',
+                            'action'     => 'process-add',
+                        ),
+                        'default',
+                        true
+                    ), 
+                )
             );
         }
         return $this->view->bugForm;
@@ -157,7 +167,17 @@ class BugController extends Zend_Controller_Action
         if (!isset($this->view->commentForm)) {
             $this->view->commentForm  = $this->_helper->getForm(
                 'comment', 
-                array('action' => '/bug/comment', 'method' => 'post')
+                array(
+                    'method' => 'post',
+                    'action' => $this->view->url(
+                        array(
+                            'controller' => 'bug',
+                            'action'     => 'comment',
+                        ),
+                        'default',
+                        true
+                    ), 
+                )
             );
             $userId = $this->view->commentForm->user_id;
             $userId->addValidator('Identical', true, array($this->userId));

@@ -1,13 +1,13 @@
 <div id="topnav">
     <ul>
-        <li><a href="/bug">Issues</a></li>
+        <li><a href="<?= $this->url(array('controller' => 'bug'), 'default', true) ?>">Issues</a></li>
         <? if ('guest' === $this->getRole()): ?>
-        <li><a href="/user">Login/Register</a></li>
+        <li><a href="<?= $this->url(array('controller' => 'user'), 'default', true) ?>/user">Login/Register</a></li>
         <? else: ?>
             <? if ($this->checkAcl('bug', 'add')): ?>
-        <li><a href="/bug/add">Report an Issue</a></li>
+        <li><a href="<?= $this->url(array('controller' => 'bug', 'action' => 'add'), 'default', true) ?>">Report an Issue</a></li>
             <? endif ?>
-        <li>Logged in as <a href="/user/view"><?= $this->user_name ?></a></li>
+        <li>Logged in as <a href="<?= $this->url(array('controller' => 'user', 'action' => 'view'), 'default', true) ?>"><?= $this->user_name ?></a></li>
         <? endif ?>
     </ul>
 </div>

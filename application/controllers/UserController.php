@@ -17,8 +17,34 @@ class UserController extends Zend_Controller_Action
             }
         }
 
-        $this->view->loginForm        = $this->_helper->getForm('login', array('action' => '/user/login', 'method' => 'post'));
-        $this->view->registrationForm = $this->_helper->getForm('register', array('action' => '/user/register', 'method' => 'post'));
+        $this->view->loginForm = $this->_helper->getForm(
+            'login', 
+            array(
+                'method' => 'post',
+                'action' => $this->view->url(
+                    array(
+                        'controller' => 'user',
+                        'action'     => 'login',
+                    ),
+                    'default',
+                    true
+                ), 
+            )
+        );
+        $this->view->registrationForm = $this->_helper->getForm(
+            'register', 
+            array(
+                'method' => 'post',
+                'action' => $this->view->url(
+                    array(
+                        'controller' => 'user',
+                        'action'     => 'register',
+                    ),
+                    'default',
+                    true
+                ), 
+            )
+        );
     }
 
     public function indexAction()
