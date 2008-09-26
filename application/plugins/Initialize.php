@@ -112,7 +112,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $viewRenderer->setView($view);
 
         // Initialize layouts
-        Zend_Layout::startMvc($this->_appPath . '/views/layouts');
+        Zend_Layout::startMvc($this->_appPath . '/layouts/scripts');
     }
 
     /**
