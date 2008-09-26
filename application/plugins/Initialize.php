@@ -34,7 +34,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     {
         $this->_setEnv($env);
         if (null === $appPath) {
-            $appPath = realpath(dirname(__FILE__) . '/../../../application');
+            $appPath = realpath(dirname(__FILE__) . '/../');
         }
         $this->_appPath = $appPath;
 
@@ -91,7 +91,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initHelpers()
     {
-        Zend_Controller_Action_HelperBroker::addPrefix('Bugapp_Helper');
+        Zend_Controller_Action_HelperBroker::addPath($this->_appPath . '/controllers/helpers', 'Bugapp_Helper');
     }
 
     /**
@@ -122,7 +122,11 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function initPlugins()
     {
-        $this->_front->registerPlugin(new Bugapp_Plugin_Auth());
+        $loader = new Zend_Loader_PluginLoader(array(
+            'Bugapp_Plugin' => $this->_appPath . '/plugins/',
+        ));
+        $class = $loader->load('Auth');
+        $this->_front->registerPlugin(new $class());
     }
 
     /**
@@ -152,11 +156,7 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     protected function _getConfig()
     {
         if (null === self::$_config) {
-            $configData = include $this->_appPath . '/config/site.php';
-            if (!array_key_exists($this->_env, $configData)) {
-                throw new Exception(sprintf('No configuration available for env %s', $this->_env));
-            }
-            self::$_config = new Zend_Config($configData[$this->_env], true);
+            self::$_config = new Zend_Config_Ini($this->_appPath . '/config/site.ini', $this->_env, true);
             self::$_config->root = $this->_appPath;
         }
         return self::$_config;

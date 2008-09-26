@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/AModel.php';
+require_once dirname(__FILE__) . '/Model.php';
 
 /**
  * User model
@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/AModel.php';
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */
-class Model_User extends Model_AModel
+class Bugapp_User extends Bugapp_Model
 {
     protected $_primaryTable = 'user';
 

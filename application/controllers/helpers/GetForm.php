@@ -1,7 +1,27 @@
 <?php
 class Bugapp_Helper_GetForm extends Zend_Controller_Action_Helper_Abstract
 {
+    /**
+     * @var array Form instances
+     */
     protected $_forms = array();
+
+    /**
+     * @var Zend_Loader_PluginLoader
+     */
+    protected $_loader;
+
+    /**
+     * Initialize plugin loader for forms
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->_loader = new Zend_Loader_PluginLoader(array(
+            'Bugapp_Form' => APPLICATION_PATH . '/forms',
+        ));
+    }
 
     /**
      * Load and return a form object
@@ -12,12 +32,11 @@ class Bugapp_Helper_GetForm extends Zend_Controller_Action_Helper_Abstract
      */
     public function getForm($form, $config = null)
     {
-        $form = ucfirst($form);
-        $class = 'Bugapp_Form_' . $form;
-        if (!array_key_exists($class, $this->_forms)) {
-            $this->_forms[$class] = new $class($config);
+        if (!array_key_exists($form, $this->_forms)) {
+            $class = $this->_loader->load($form);
+            $this->_forms[$form] = new $class($config);
         }
-        return $this->_forms[$class];
+        return $this->_forms[$form];
     }
 
     /**

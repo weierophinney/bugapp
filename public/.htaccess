@@ -1,6 +1,6 @@
 php_flag  magic_quotes_gpc Off
-php_flag  display_errors Off
-php_flag  display_startup_errors Off
+php_flag  display_errors On
+php_flag  display_startup_errors On
 php_value date.timezone America/New_York
 php_value short_open_tag 1
 php_value error_reporting 8191

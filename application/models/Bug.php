@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__) . '/AModel.php';
+require_once dirname(__FILE__) . '/Model.php';
 
 /**
  * Bug application model
@@ -10,7 +10,7 @@ require_once dirname(__FILE__) . '/AModel.php';
  * @license   New BSD {@link http://framework.zend.com/license/new-bsd}
  * @version   $Id: $
  */
-class Model_Bug extends Model_AModel
+class Bugapp_Bug extends Bugapp_Model
 {
     /**
      * Primary table for operations
@@ -38,7 +38,7 @@ class Model_Bug extends Model_AModel
      * 
      * @param  string $field 
      * @param  string $direction 
-     * @return Model_Bug
+     * @return Bugapp_Bug
      */
     public function setSortOrder($field, $direction)
     {
@@ -51,7 +51,7 @@ class Model_Bug extends Model_AModel
      * 
      * @param  string $field 
      * @param  string $direction 
-     * @return Model_Bug
+     * @return Bugapp_Bug
      */
     public function addSortOrder($field, $direction)
     {
@@ -391,7 +391,7 @@ class Model_Bug extends Model_AModel
      * @param  Zend_Db_Table_Select $select 
      * @param  int|null $limit 
      * @param  int|null $offset 
-     * @return Model_Bug
+     * @return Bugapp_Bug
      */
     protected function _setLimit(Zend_Db_Table_Select $select, $limit, $offset)
     {
@@ -409,7 +409,7 @@ class Model_Bug extends Model_AModel
      * Set sort order on select object
      * 
      * @param  Zend_Db_Table_Select $select 
-     * @return Model_Bug
+     * @return Bugapp_Bug
      */
     protected function _setSort(Zend_Db_Table_Select $select)
     {

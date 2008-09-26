@@ -1,16 +1,9 @@
 <?php
-class Zend_View_Helper_OpenBugs
+class Zend_View_Helper_OpenBugs extends Zend_View_Helper_Abstract
 {
-    public $view;
-
     protected $_model;
 
     protected $_validUserTypes = array('developer', 'reporter');
-
-    public function setView(Zend_View_Interface $view)
-    {
-        $this->view = $view;
-    }
 
     public function openBugs($userId = null, $userType = null)
     {
@@ -43,8 +36,9 @@ class Zend_View_Helper_OpenBugs
     public function getModel()
     {
         if (null === $this->_model) {
-            require_once dirname(__FILE__) . '/../../models/Bug.php';
-            $this->_model = new Model_Bug();
+            $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('GetModel');
+            $class  = $helper->getModel('Bug');
+            $this->_model = new $class();
         }
         return $this->_model;
     }

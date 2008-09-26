@@ -1,5 +1,5 @@
 <?php
-class Zend_View_Helper_GetRole
+class Zend_View_Helper_GetRole extends Zend_View_Helper_Abstract
 {
     public function getRole()
     {

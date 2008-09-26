@@ -3,17 +3,16 @@ class Bugapp_Form_Register extends Zend_Form
 {
     public function init()
     {
-        $root = Bugapp_Plugin_Initialize::getConfig()->root;
-        require_once $root . '/models/User.php';
+        require_once APPLICATION_PATH . '/models/User.php';
 
-        $this->addElementPrefixPath('Bugapp_Validate', 'Bugapp/Validate/', 'validate');
+        $this->addElementPrefixPath('Bugapp_Validate', APPLICATION_PATH . '/models/Validate/', 'validate');
 
         $username = $this->addElement('text', 'username', array(
             'filters'    => array('StringTrim', 'StringToLower'),
             'validators' => array(
                 'Alpha',
                 array('StringLength', true, array(3, 20)),
-                array('UniqueUsername', false, array(new Model_User())),
+                array('UniqueUsername', false, array(new Bugapp_User())),
             ),
             'required'   => true,
             'label'      => 'Desired username:',
@@ -32,7 +31,7 @@ class Bugapp_Form_Register extends Zend_Form
             'filters'    => array('StringTrim'),
             'validators' => array(
                 array('EmailAddress', true),
-                array('UniqueUsername', true, array(new Model_User())),
+                array('UniqueUsername', true, array(new Bugapp_User())),
             ),
             'required'   => false,
             'label'      => 'Your email address:',

@@ -1,13 +1,6 @@
 <?php
-class Zend_View_Helper_CheckAcl
+class Zend_View_Helper_CheckAcl extends Zend_View_Helper_Abstract
 {
-    public $view;
-
-    public function setView(Zend_View_Interface $view)
-    {
-        $this->view = $view;
-    }
-
     public function checkAcl($resource, $right)
     {
         $acl  = Zend_Registry::get('acl');

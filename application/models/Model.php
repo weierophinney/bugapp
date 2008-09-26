@@ -1,5 +1,5 @@
 <?php
-abstract class Model_AModel
+abstract class Bugapp_Model
 {
     /**
      * @var Zend_Loader_PluginLoader
@@ -32,7 +32,7 @@ abstract class Model_AModel
     {
         if (null === $this->_loader) {
             $this->_loader = new Zend_Loader_PluginLoader();
-            $this->_loader->addPrefixPath('Model_Table', dirname(__FILE__) . '/Table/');
+            $this->_loader->addPrefixPath('Bugapp_DbTable', dirname(__FILE__) . '/DbTable/');
         }
         return $this->_loader;
     }

@@ -9,7 +9,7 @@ class Bugapp_Validate_UniqueUsername extends Zend_Validate_Abstract
 
     protected $_model;
 
-    public function __construct(Model_User $model)
+    public function __construct(Bugapp_User $model)
     {
         $this->_model = $model;
     }
