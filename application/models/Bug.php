@@ -369,6 +369,16 @@ class Bugapp_Bug extends Bugapp_Model
     }
 
     /**
+     * Cleanup test bugs
+     * 
+     * @return void
+     */
+    public function cleanupTestBugs()
+    {
+        $this->getTable('bug')->delete('description = "appBenchmarking"');
+    }
+
+    /**
      * Get select statement for bug table
      * 
      * @return Zend_Db_Table_Select

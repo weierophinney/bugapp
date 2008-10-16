@@ -141,6 +141,28 @@ class BugController extends Zend_Controller_Action
         $this->_helper->redirector('view', 'bug', 'default', array('id' => $bugId));
     }
 
+    public function deleteAction()
+    {
+        if (!$this->getRequest()->isPost()) {
+            return $this->render('not-found');
+        }
+
+        if (!($id = $this->_getParam('id', false))) {
+            return $this->render('not-found');
+        }
+
+        $model = $this->_helper->getModel('bug');
+        $model->delete($id);
+        return $this->_helper->redirector('list');
+    }
+
+    public function cleanupAction()
+    {
+        $model = $this->_helper->getModel('bug');
+        $model->cleanupTestBugs();
+        $this->_helper->redirector('index');
+    }
+
     public function getBugForm()
     {
         if (!isset($this->view->bugForm)) {
