@@ -35,7 +35,7 @@ class Model_UserTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->model = new Model_User();
+        $this->model = new Bugapp_User();
         $this->truncateTable();
     }
 

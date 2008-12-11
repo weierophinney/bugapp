@@ -6,7 +6,15 @@ $paths = array(
     get_include_path()
 );
 set_include_path(implode(PATH_SEPARATOR, $paths));
+
 require_once 'Zend/Loader.php';
+require_once 'Zend/Loader/PluginLoader.php';
+$pluginIncFile = APPLICATION_PATH . '/../data/cache/plugins.inc.php';
+if (file_exists($pluginIncFile)) {
+    include_once $pluginIncFile;
+}
+Zend_Loader_PluginLoader::setIncludeFileCache($pluginIncFile);
+
 Zend_Loader::registerAutoload();
 
 try {

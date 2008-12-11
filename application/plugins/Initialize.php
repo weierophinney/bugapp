@@ -39,6 +39,8 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         $this->_appPath = $appPath;
 
         $this->_front = Zend_Controller_Front::getInstance();
+
+        Zend_Locale::$compatibilityMode = false;
     }
 
     /**
@@ -49,12 +51,13 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
      */
     public function routeStartup(Zend_Controller_Request_Abstract $request)
     {
-        $this->initDb();
-        $this->initHelpers();
-        $this->initView();
-        $this->initPlugins();
-        $this->initRoutes();
-        $this->initControllers();
+        // $this->initPathCache()
+        $this->initDb()
+             ->initHelpers()
+             ->initView()
+             ->initPlugins()
+             ->initRoutes()
+             ->initControllers();
     }
 
     /**
@@ -68,36 +71,54 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
     }
 
     /**
+     * Initialize the file map cache for Zend_Loader
+     * 
+     * @return Bugapp_Plugin_Initialize
+     */
+    public function initPathCache()
+    {
+        $pluginIncFile = $this->_appPath . '/../data/cache/plugins.inc.php';
+        if (file_exists($pluginIncFile)) {
+            include_once $pluginIncFile;
+        }
+        Zend_Loader::setIncludeFileCache($pluginIncFile);
+        Zend_Loader_PluginLoader::setIncludeFileCache($pluginIncFile);
+        return $this;
+    }
+
+    /**
      * Initialize DB
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initDb()
     {
         $config = $this->_getConfig();
         if (!isset($config->db)) {
-            return;
+            return $this;
         }
 
         $db = Zend_Db::factory($config->db);
         Zend_Db_Table_Abstract::setDefaultAdapter($db);
         Zend_Registry::set('db', $db);
+        return $this;
     }
 
     /**
      * Initialize action helpers
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initHelpers()
     {
         Zend_Controller_Action_HelperBroker::addPath($this->_appPath . '/controllers/helpers', 'Bugapp_Helper');
+        return $this;
     }
 
     /**
      * Initialize view and layout
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initView()
     {
@@ -113,12 +134,14 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
 
         // Initialize layouts
         Zend_Layout::startMvc($this->_appPath . '/layouts/scripts');
+
+        return $this;
     }
 
     /**
      * Initialize plugins
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initPlugins()
     {
@@ -127,25 +150,28 @@ class Bugapp_Plugin_Initialize extends Zend_Controller_Plugin_Abstract
         ));
         $class = $loader->load('Auth');
         $this->_front->registerPlugin(new $class());
+        return $this;
     }
 
     /**
      * Initialize routes
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initRoutes()
     {
+        return $this;
     }
 
     /**
      * Initialize controller directories
      * 
-     * @return void
+     * @return Bugapp_Plugin_Initialize
      */
     public function initControllers()
     {
         $this->_front->addControllerDirectory($this->_appPath . '/controllers/');
+        return $this;
     }
 
     /**

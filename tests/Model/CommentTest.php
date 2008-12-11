@@ -35,7 +35,7 @@ class Model_CommentTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->model = new Model_Comment();
+        $this->model = new Bugapp_Comment();
         $this->truncateTable();
     }
 

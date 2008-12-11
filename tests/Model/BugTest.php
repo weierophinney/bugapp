@@ -35,7 +35,7 @@ class Model_BugTest extends PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->model = new Model_Bug();
+        $this->model = new Bugapp_Bug();
     }
 
     /**
@@ -52,7 +52,7 @@ class Model_BugTest extends PHPUnit_Framework_TestCase
     {
         $loader = $this->model->getPluginLoader();
         $this->assertTrue($loader instanceof Zend_Loader_PluginLoader);
-        $paths = $loader->getPaths('Model_Table');
+        $paths = $loader->getPaths('Bugapp_DbTable');
         $this->assertTrue(is_array($paths));
         $this->assertTrue(0 < count($paths));
     }
@@ -61,11 +61,11 @@ class Model_BugTest extends PHPUnit_Framework_TestCase
     {
         $table = $this->model->getTable('Bug');
         $this->assertTrue($table instanceof Zend_Db_Table_Abstract);
-        $this->assertTrue($table instanceof Model_Table_Bug);
+        $this->assertTrue($table instanceof Bugapp_DbTable_Bug);
 
         $table = $this->model->getTable('ResolutionType');
         $this->assertTrue($table instanceof Zend_Db_Table_Abstract);
-        $this->assertTrue($table instanceof Model_Table_ResolutionType);
+        $this->assertTrue($table instanceof Bugapp_DbTable_ResolutionType);
     }
 
     public function testGetTypesShouldReturnHashOfIdsAndTypes()
